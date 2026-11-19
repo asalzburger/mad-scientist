@@ -2,10 +2,18 @@
 
 ## Set up
 
-You need Python 3.11 or later, on Linux or macOS (Windows through WSL). Check with
-`python3 --version`: macOS's own `python3` is 3.9, too old, so install a newer one first, for
-example with Homebrew (`brew install python@3.12`, then use `python3.12` below) or from
-python.org.
+You need Python 3.11 or later, on Linux or macOS (Windows through WSL). Check the `python3` you
+have:
+
+```bash
+python3 -c 'import sys; assert sys.version_info >= (3, 11), sys.version'
+```
+
+It prints nothing when the version is new enough. If it fails, as it does with macOS's own
+`python3` (3.9), install a newer Python, for example with Homebrew (`brew install python@3.12`) or
+from python.org, and make the environment with it by name: `python3.12 -m venv .venv` in place of
+`python3 -m venv .venv` below. Once the environment is active, `python` and `pip` are the new
+version.
 
 ```bash
 git clone https://github.com/nsurijr/mad-scientist.git
@@ -17,15 +25,23 @@ pip install -e '.[dev]'
 ```
 
 An older pip refuses the last line with "editable mode currently requires a setuptools-based
-build"; upgrading pip fixes it.
+build"; upgrading pip fixes it. If pip says the package requires a different Python, or `hack` is
+"command not found" afterwards, the environment was made with a Python older than 3.11: delete
+`.venv` and make it again with a newer one.
 
 Then fetch s0's golden run, which `hack check` reads, and unpack it at the repository's root. It
 is about 50 MB, attached to the repository's release:
 
 ```bash
-curl -LO https://github.com/nsurijr/mad-scientist/releases/latest/download/golden-s0.tar.gz
+curl -fLO https://github.com/nsurijr/mad-scientist/releases/latest/download/golden-s0.tar.gz
 tar xzf golden-s0.tar.gz
 ```
+
+With `-f`, `curl` stops with an error instead of saving GitHub's error page as the archive. While
+the repository is private, the link returns 404: download `golden-s0.tar.gz` from the repository's
+Releases page while signed in to GitHub, or with the GitHub CLI,
+`gh release download event-1 -R nsurijr/mad-scientist -p golden-s0.tar.gz --clobber`, then unpack
+it as above.
 
 This creates `golden/`:
 

@@ -24,11 +24,20 @@ on the event service: you send it attacks with the `hack` command.
 
 ## Quick start
 
+You need Python 3.11 or later. Check first:
+
+```bash
+python3 -c 'import sys; assert sys.version_info >= (3, 11), sys.version'   # prints nothing if new enough
+```
+
+If it fails (macOS's own `python3` is 3.9), install a newer Python and use it by name in the
+`venv` line below, for example `python3.12 -m venv .venv` (`docs/submitting.md`, "Set up").
+
 ```bash
 git clone https://github.com/nsurijr/mad-scientist.git && cd mad-scientist
-python3 -m venv .venv && . .venv/bin/activate   # Python 3.11 or later
+python3 -m venv .venv && . .venv/bin/activate
 pip install --upgrade pip && pip install -e '.[dev]'
-curl -LO https://github.com/nsurijr/mad-scientist/releases/latest/download/golden-s0.tar.gz
+curl -fLO https://github.com/nsurijr/mad-scientist/releases/latest/download/golden-s0.tar.gz
 tar xzf golden-s0.tar.gz                  # s0's honest golden run, for hack check
 
 mkdir -p attacks && cp -r template/hello_world attacks/hello   # then set your team's name in its manifest.yaml
@@ -39,6 +48,11 @@ hack preview attacks/hello                # free: where the attack begins, and w
 hack submit attacks/hello                 # a live eval on s0
 hack status
 ```
+
+While the repository is private, `curl` stops with a 404 error. Download `golden-s0.tar.gz` from
+the repository's Releases page while signed in to GitHub, or with
+`gh release download event-1 -R nsurijr/mad-scientist -p golden-s0.tar.gz --clobber`, then unpack
+it as above.
 
 ## Layout
 
