@@ -92,17 +92,19 @@ hack preview attacks/my_first
 ```
 
 A preview runs your attack on s0 against the golden recording, with no live model calls. It
-replays the golden run up to your attack's first change, runs on as far as it can without
-inference, and stops at the first call that would need the model. It shows:
+replays the golden run up to your attack's first change, runs on as far as the recording allows,
+and stops at the first call the golden run never made: a model request, or a tool call such as
+code that now runs on changed inputs. It shows:
 - where the attack begins (the first hook call that changed something);
-- the first call that needs inference;
+- the first live call: its stage, its number in the run, and whether it is a model call or a tool
+  call;
 - the estimated share of a full eval that would run live, from the golden run's tokens;
-- the diff between that first live request and the nearest request in the golden run.
+- for a model call, the diff between that request and the nearest request in the golden run.
 
 `hack preview` prints the preview's eval id; `hack status <eval id>` shows the result once it is
 done. A preview doesn't count against your cap, but it takes one of your three evals in flight
-while it runs. It tells you the attack begins where you meant it to, and what it will cost; it can't tell
-you the result.
+while it runs. It tells you whether the attack begins where you meant it to, and what it will
+cost; it can't tell you the result.
 
 ### `hack submit`: a live eval
 

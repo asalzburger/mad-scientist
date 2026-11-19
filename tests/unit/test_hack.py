@@ -122,6 +122,18 @@ def test_the_team_commands_need_only_the_sdk_the_manifest_and_the_check():
                                                         "harness.manifest", "harness.stages", "harness.validate"]
 
 
+def test_a_preview_names_its_first_live_call_in_words(capsys):
+    cli._print_eval({"id": "team-01-002-preview-s0-e19908", "kind": "preview", "submission_id": "team-01-002",
+                     "seed": "s0", "status": "done",
+                     "preview": {"diverged_at": "S4 on_input scores_oof.csv (scores_oof.csv#1)",
+                                 "first_live_call": {"call": 134, "eval": "s0/S4", "kind": "tool"},
+                                 "estimated_reexecution_fraction": 0.158}})
+    out = capsys.readouterr().out
+    assert "first live call: S4, call 134 (a tool call)" in out
+    assert cli._call({"call": 151, "eval": "s0/S5", "kind": "llm"}) == "S5, call 151 (a model call)"
+    assert cli._call(None) == "none"
+
+
 def test_the_team_hack_has_no_admin_commands(capsys):
     with pytest.raises(SystemExit):
         cli.main(["admin", "freeze"])

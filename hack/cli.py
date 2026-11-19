@@ -58,6 +58,14 @@ class Client:
         return data.decode() if raw else json.loads(data)
 
 
+def _call(first: Any) -> str:
+    """A first live call as a team reads it, such as "S4, call 134 (a tool call)"."""
+    if not isinstance(first, dict):
+        return str(first) if first else "none"
+    kind = {"llm": "a model call", "tool": "a tool call"}.get(first.get("kind"), first.get("kind"))
+    return f"{str(first.get('eval', '')).rpartition('/')[2]}, call {first.get('call')} ({kind})"
+
+
 def _print_eval(ev: dict[str, Any]) -> None:
     print(f"{ev['id']}  {ev['kind']} of {ev.get('submission_id')} on {ev['seed']}: {ev['status']}")
     check = ev.get("check") or {}
@@ -70,7 +78,7 @@ def _print_eval(ev: dict[str, Any]) -> None:
     if ev.get("preview"):
         p = ev["preview"]
         print(f"  attack begins at: {p.get('diverged_at')}")
-        print(f"  first call that needs inference: {p.get('first_live_call')}")
+        print(f"  first live call: {_call(p.get('first_live_call'))}")
         print(f"  estimated live share of a full eval: {p.get('estimated_reexecution_fraction')}")
         if p.get("attack_error"):
             print(f"  the attack failed: {p['attack_error']}")
@@ -88,7 +96,7 @@ def _print_eval(ev: dict[str, Any]) -> None:
                   f"{r['gate_on_mean']:.2f}")
         for why in r.get("why_not_usable") or []:
             print(f"  not usable: {why}")
-        print(f"  first live call {r['first_live_call']}; cache {r['cache']}; tokens {r['tokens_used']}; "
+        print(f"  first live call {_call(r['first_live_call'])}; cache {r['cache']}; tokens {r['tokens_used']}; "
               f"{r['runtime_min']} min")
 
 
