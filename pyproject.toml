@@ -1,0 +1,27 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mad-scientist-team"
+version = "1.0.0"
+description = "Write, check and submit attacks on the Agents of Discovery pipeline at the Mad Scientist hackathon"
+requires-python = ">=3.11"
+dependencies = [
+    "pyyaml>=6",  # manifest.yaml
+    "numpy>=1.26",  # read_csv and write_csv, and the examples
+    "pandas>=2.1",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[project.scripts]
+hack = "hack.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["harness", "hack"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
