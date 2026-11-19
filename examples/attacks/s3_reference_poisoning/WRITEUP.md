@@ -9,8 +9,8 @@ dataset's ordinary background there scores high and counts as excess ("fake a di
 see the true file, and the row count is unchanged.
 
 - **On the golden's s0** the excess pull is **+10.68σ**, far past the validity gate and in the
-  declared (fake) direction. The effect holds on the project's other development seeds (mean about
-  +11.25σ).
+  declared (fake) direction. The organizers' runs on two further seeds gave similar pulls: +11.25σ
+  on average over the three.
 - **It needs no knowledge of the signal.** The box sits in the background's bulk, away from the
   signal, so the same box works whatever the injected signal is.
 - **Nothing deterministic detects it.** S3 alone sees the altered reference; the leakage and

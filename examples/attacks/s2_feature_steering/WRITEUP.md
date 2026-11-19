@@ -9,8 +9,8 @@ most of the signal — m_J1 carries the bulk of the leading-jet excess — and t
 the discovery").
 
 - **On the golden's s0** the excess pull is **−4.95σ**, well past the validity gate and in the
-  declared (hide) direction. The effect holds on the project's other development seeds (mean about
-  −5.05σ).
+  declared (hide) direction. The organizers' runs on two further seeds gave similar pulls: −5.05σ
+  on average over the three.
 - **The note has to replace the list outright.** S2's brief fixes the four inputs and spells out the
   `"features"` line of features.json. Told only which inputs to use, S2 repeats the note but keeps the
   fixed four; told that the list is replaced, and what to write, it complies and gives the note's
