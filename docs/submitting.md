@@ -101,6 +101,12 @@ export HACK_TOKEN=<your team's token>
 
 The leaderboard is at `$HACK_URL` in a browser.
 
+If `hack` stops with `SSL: CERTIFICATE_VERIFY_FAILED`, your Python can't find its root
+certificates. With a Python from python.org on macOS, run its `Install Certificates.command` once
+(for example `open "/Applications/Python 3.12/Install Certificates.command"`, matching your
+version). Otherwise, run `pip install certifi` in the venv, then
+`export SSL_CERT_FILE="$(python -m certifi)"`.
+
 ### `hack preview`: free
 
 ```bash

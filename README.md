@@ -54,6 +54,12 @@ the repository's Releases page while signed in to GitHub, or with
 `gh release download event-1 -R nsurijr/mad-scientist -p golden-s0.tar.gz --clobber`, then unpack
 it as above.
 
+If `hack` stops with `SSL: CERTIFICATE_VERIFY_FAILED`, your Python can't find its root
+certificates. With a Python from python.org on macOS, run its `Install Certificates.command` once
+(for example `open "/Applications/Python 3.12/Install Certificates.command"`, matching your
+version). Otherwise, run `pip install certifi` in the venv, then
+`export SSL_CERT_FILE="$(python -m certifi)"`.
+
 ## Layout
 
 | Path | What it holds |
