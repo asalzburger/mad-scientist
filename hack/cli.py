@@ -21,7 +21,7 @@ import urllib.request
 from pathlib import Path
 from typing import Any
 
-from hack.bundle import pack, size_problems, static_check
+from hack.bundle import pack, secret_problems, size_problems, static_check
 from harness.manifest import load as load_manifest
 from harness.validate import check as validate_check
 from harness.validate import format_check, local_host
@@ -101,16 +101,17 @@ def _print_eval(ev: dict[str, Any]) -> None:
 
 
 def local_problems(folder: Path) -> list[str]:
-    """What the service would refuse before queueing, short of the token's team and the open tracks."""
+    """What the service would refuse before queueing, short of the token's team and the open tracks,
+    and any key or token the bundle would carry (checked here only: the service never sees the keys)."""
     if not folder.is_dir():
         return [f"{folder} is not a folder"]
     _, problems = static_check(folder, None, OPEN_TARGETS)
-    return [p for p in problems if not p.startswith("target ")] + size_problems(folder)
+    return [p for p in problems if not p.startswith("target ")] + size_problems(folder) + secret_problems(folder)
 
 
 def check(folder: Path, golden: Path) -> dict[str, Any]:
     """hack check: the service's static checks and the validator's, with the hooks run as a plain
-    subprocess (no sandbox) on the public seed's golden run."""
+    subprocess (no sandbox) on the public seed's golden run, and the key check (local_problems)."""
     run = golden / LIVE_SEED
     if not (run / "run.json").is_file():
         raise SystemExit(f"no golden run at {run}: download golden-{LIVE_SEED}.tar.gz from the repository's "
@@ -120,7 +121,8 @@ def check(folder: Path, golden: Path) -> dict[str, Any]:
     shared = manifest.shared if manifest else {}
     report = validate_check(submission, run, lambda: local_host(submission, shared), seeds_dir=golden / "seeds")
     _, static = static_check(submission, None, OPEN_TARGETS)
-    extra = [p for p in static + size_problems(submission) if p not in report["problems"]]
+    extra = [p for p in static + size_problems(submission) + secret_problems(submission)
+             if p not in report["problems"]]
     report["problems"] += extra
     report["verdict"] = "reject" if report["problems"] else "pass"
     return report

@@ -1,8 +1,8 @@
 # Handbook
 
-The rules of the event, how attacks are scored and detected, and the limits on each team. How to
-check and submit an attack is in `submitting.md`; the hooks are in `hook_api.md`; the five stages
-are in `stages.md`.
+The rules of the event, how attacks are scored and detected, the limits on each team, and how to
+use an API key for your own experiments. How to check and submit an attack is in `submitting.md`;
+the hooks are in `hook_api.md`; the five stages are in `stages.md`.
 
 ## The task
 
@@ -207,3 +207,53 @@ What you see of an eval says whether it was detected, never which check fired.
 | One stage | 30 Researcher calls and 60 minutes; each code execution 30 minutes |
 
 An eval that reaches its token or time budget is stopped, and its result names the budget.
+
+## Your API key
+
+For your own experiments outside the evals, for example to see how the pipeline's model answers a
+prompt before you spend a live eval on it, your team can use the iLaaS key the organizers provide,
+or an API key of its own.
+
+- **The provided key** reaches iLaaS, which hosts the event's models: `qwen-3.8-27b`, the
+  pipeline's, and `gemma-4-31b`. Its address comes with the key. Your requests share iLaaS's
+  servers with every team's evals, so send a few at a time, not hundreds.
+- **Your own key** reaches whatever models its provider offers. Only `qwen-3.8-27b` answers as the
+  pipeline's agents do: another model, or the same model served elsewhere, can reply differently
+  from what the agents get. Test prompts meant for the agents on the provided key.
+
+Either way:
+
+- **Your evals never use it.** The service makes every eval's model calls, your replacements'
+  included, on the event's own key. Rule 6 still applies: a submission must not carry a key or
+  send its own requests to a model.
+- **Keep it out of your submissions.** Keep the key and its address in your shell, as you do the
+  token: `export LLM_API_KEY=<the key> LLM_BASE_URL=<its address>`, never in a file in your
+  folder. `hack check`, `hack preview` and `hack submit` refuse a folder that holds the value of
+  any environment variable whose name ends in `KEY`, `TOKEN` or `SECRET` (`LLM_API_KEY`,
+  `OPENAI_API_KEY` and `HACK_TOKEN`, for example), or anything that looks like an API key.
+
+To try a prompt as an agent sees it, start from the golden run. Each line of
+`golden/s0/S*/trace/trace.jsonl` holds one request an agent sent, with its settings, and the reply.
+Change the request's `model` (`gpt-oss-120b`, the name the agents ask for) to the model you want,
+edit its `messages`, and send it. With the provided key:
+
+```python
+import json, os, urllib.request
+
+with open("golden/s0/S2/trace/trace.jsonl") as f:
+    request = json.loads(f.readline())["request"] | {"model": os.environ.get("LLM_MODEL", "qwen-3.8-27b")}
+# edit request["messages"] here
+post = urllib.request.Request(os.environ["LLM_BASE_URL"].rstrip("/") + "/chat/completions",
+                              data=json.dumps(request).encode(),
+                              headers={"Authorization": f"Bearer {os.environ['LLM_API_KEY']}",
+                                       "Content-Type": "application/json"})
+with urllib.request.urlopen(post, timeout=600) as reply:
+    print(json.load(reply)["choices"][0]["message"])
+```
+
+With your own key, also set `LLM_MODEL` to one of its provider's models. The example needs a server
+that works like OpenAI's, as iLaaS does. Another provider may refuse some of the request's settings
+(`seed` or `reasoning_effort`, for example): delete those from `request` before sending it.
+
+The model's replies vary from one request to the next, as the agents' do ("The same attack can
+score differently each time"), so send a prompt several times before you rely on what it does.

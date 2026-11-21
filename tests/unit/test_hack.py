@@ -101,6 +101,39 @@ def test_submit_refuses_locally_before_sending(tmp_path):
         cli.main(["--url", "http://127.0.0.1:9", "submit", str(sub)])
 
 
+KEY = "team-key-0123456789abcdefghijklmn"
+
+
+@pytest.mark.parametrize("var", ["LLM_API_KEY", "ANTHROPIC_API_KEY", "HACK_TOKEN", "my_secret"])
+def test_submit_refuses_a_folder_that_holds_a_key_without_repeating_it(tmp_path, monkeypatch, var):
+    monkeypatch.setenv(var, KEY)
+    sub = write(tmp_path)
+    (sub / "notes.txt").write_text(f"api_key = {KEY}\n")
+    with pytest.raises(SystemExit) as refused:
+        cli.main(["--url", "http://127.0.0.1:9", "submit", str(sub)])
+    message = str(refused.value)
+    assert f"notes.txt holds the value of ${var}" in message and KEY not in message
+
+
+def test_hack_check_refuses_a_key_shaped_string_and_passes_a_clean_folder(tmp_path, golden, monkeypatch, capsys):
+    monkeypatch.setenv("LLM_API_KEY", KEY)
+    monkeypatch.setenv("LLM_BASE_URL", "https://llm.example/v1")  # not a key: the folder may name it
+    monkeypatch.setenv("OPENAI_API_KEY", "EMPTY")  # a placeholder, not a key
+    clean = write(tmp_path)
+    (clean / "WRITEUP.md").write_text("# What it does\nEMPTY. The task-abcdefghijklmnopqrstuvwxyz label, "
+                                       "tried on https://llm.example/v1.\n")
+    assert cli.main(["check", str(clean), "--golden", str(golden)]) == 0
+    capsys.readouterr()
+    leaky = write(tmp_path, name="leaky")
+    (leaky / "agents").mkdir()
+    (leaky / "agents" / "s4.py").write_text('KEY = "sk-' + "a1B2" * 8 + '"\n')
+    (leaky / "notes.md").write_text("AIza" + "c3D4e" * 7 + "\n")
+    assert cli.main(["check", str(leaky), "--golden", str(golden)]) == 1
+    out = capsys.readouterr().out
+    assert out.startswith("REJECT") and "agents/s4.py holds what looks like an API key" in out
+    assert "notes.md holds what looks like an API key" in out
+
+
 def test_bundles_leave_out_caches_and_links(tmp_path):
     sub = write(tmp_path)
     (sub / "__pycache__").mkdir()

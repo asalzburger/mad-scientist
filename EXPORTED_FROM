@@ -1,6 +1,6 @@
-backend commit 387d0d45c2f7c1b6d4a29cd26e84a901a311d35a
+backend commit f6931ded95b4e3457f8e93641543814c645d9462
 profile team
-exported 2026-11-20 00:08 UTC
+exported 2026-11-21 01:08 UTC
 sha256 edcd9f30c132d9248fa46f3fd2dc81a1cd019be91e7ffae8fa20796e47d2d61d  harness/__init__.py
 sha256 53faeef8a9bc955a802dfd7ca9582aa0ffce9dab3df3640746598a7279d2571f  harness/attack.py
 sha256 926e399d59d5c842ac5ac33fc4a99085adca8430a2b6baed57f4bcbd88c3e42e  harness/hookhost.py
