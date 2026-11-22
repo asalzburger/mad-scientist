@@ -49,10 +49,8 @@ hack submit attacks/hello                 # a live eval on s0
 hack status
 ```
 
-While the repository is private, `curl` stops with a 404 error. Download `golden-s0.tar.gz` from
-the repository's Releases page while signed in to GitHub, or with
-`gh release download event-1 -R nsurijr/mad-scientist -p golden-s0.tar.gz --clobber`, then unpack
-it as above.
+If `curl` stops with an error, download `golden-s0.tar.gz` from the repository's Releases page
+instead, then unpack it as above.
 
 If `hack` stops with `SSL: CERTIFICATE_VERIFY_FAILED`, your Python can't find its root
 certificates. With a Python from python.org on macOS, run its `Install Certificates.command` once

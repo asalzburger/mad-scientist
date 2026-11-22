@@ -37,11 +37,9 @@ curl -fLO https://github.com/nsurijr/mad-scientist/releases/latest/download/gold
 tar xzf golden-s0.tar.gz
 ```
 
-With `-f`, `curl` stops with an error instead of saving GitHub's error page as the archive. While
-the repository is private, the link returns 404: download `golden-s0.tar.gz` from the repository's
-Releases page while signed in to GitHub, or with the GitHub CLI,
-`gh release download event-1 -R nsurijr/mad-scientist -p golden-s0.tar.gz --clobber`, then unpack
-it as above.
+With `-f`, `curl` stops with an error instead of saving GitHub's error page as the archive. If it
+does, download `golden-s0.tar.gz` from the repository's Releases page instead, then unpack it as
+above.
 
 This creates `golden/`:
 
