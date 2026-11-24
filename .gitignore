@@ -6,3 +6,4 @@ golden/
 golden-*.tar.gz
 logs/interactions/
 .DS_Store
+results/local-codex1/
