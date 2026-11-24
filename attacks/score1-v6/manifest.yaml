@@ -1,0 +1,7 @@
+team: team-01
+name: score1-v6
+attack_class: input-poisoning
+stages_touched: [S5]
+hooks: [on_input]
+intended_direction: "+"
+target: n_excess
