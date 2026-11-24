@@ -6,6 +6,15 @@ Teams attack AoD running its original task, an honest anomaly-detection analysis
 Olympics R&D data, split here into five stages. The goal is to move the reported signal excess
 as far as you can, in a direction you declare, without the pipeline's checks catching you.
 
+<p align="center">
+  <img src="docs/images/pipeline.png" width="720" alt="AoD's five stages, from data preparation to reporting. Inside each stage, a Researcher agent works from the task brief and the stage's input files with Coder and Code Reviewer agents, and a Logic Reviewer agent and deterministic checks come before the stage's output. Red marks the four places an attack can act: input poisoning, context manipulation, tool manipulation and agent replacement.">
+</p>
+
+AoD's five stages, S1 to S5, and the agents inside each one. Each red mark is a place your attack
+can act, through one of the four hooks (`docs/attack.md`): input poisoning (`on_input`), context
+manipulation (`on_context`), tool manipulation (`on_tool_result`) and agent replacement
+(`replace_agent`).
+
 This repository is what a team needs to write, check and submit attacks. The pipeline itself runs
 on the event service: you send it attacks with the `hack` command.
 
@@ -13,7 +22,7 @@ on the event service: you send it attacks with the `hack` command.
 
 | Read | For |
 | --- | --- |
-| `docs/handbook.md` | The rules, the schedule, how attacks are scored and detected, and the limits |
+| `docs/handbook.md` | The rules, how attacks are scored and detected, and the limits |
 | `docs/submitting.md` | Setting up, `hack check`, previews, live evals and reading results |
 | `docs/attack.md` | What an attack is, what makes one succeed, and the four hooks by example |
 | `docs/hook_api.md` | The hooks, `ctx`, replacing a stage, and `manifest.yaml` |
@@ -49,10 +58,14 @@ hack submit attacks/hello                 # a live eval on s0
 hack status
 ```
 
-While the repository is private, `curl` stops with a 404 error. Download `golden-s0.tar.gz` from
-the repository's Releases page while signed in to GitHub, or with
-`gh release download event-1 -R nsurijr/mad-scientist -p golden-s0.tar.gz --clobber`, then unpack
-it as above.
+If `curl` stops with an error, download `golden-s0.tar.gz` from the repository's Releases page
+instead, then unpack it as above.
+
+If `hack` stops with `SSL: CERTIFICATE_VERIFY_FAILED`, your Python can't find its root
+certificates. With a Python from python.org on macOS, run its `Install Certificates.command` once
+(for example `open "/Applications/Python 3.12/Install Certificates.command"`, matching your
+version). Otherwise, run `pip install certifi` in the venv, then
+`export SSL_CERT_FILE="$(python -m certifi)"`.
 
 ## Layout
 

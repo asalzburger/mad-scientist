@@ -76,5 +76,20 @@ Only through a replacement agent (`AgentPolicy.llm`). The code the pipeline's ag
 technically reach their model credential and the model gateway, but an attack that makes it read
 the credential or send its own requests to the gateway is disqualified (`handbook.md`, rule 6).
 
+**Can we use our own API key instead of the provided one?**
+Yes, for your own experiments on your machines, with any model its provider offers. Only
+`qwen-3.8-27b` answers as the pipeline's agents do, so test prompts meant for them on the provided
+key (`handbook.md`, "Your API key").
+
+**Can our submission use the provided key, or our own?**
+No. Every eval runs on the event's key, and a submission must not carry a key or send its own model
+requests (rule 6).
+
+**`hack` refused our folder because a file holds a key.**
+Either the file holds the value of an environment variable whose name ends in `KEY`, `TOKEN` or
+`SECRET`, such as `LLM_API_KEY` or `HACK_TOKEN`, or it holds a string shaped like an API key (one
+starting with `sk-` or `AIza`). The message names the file and the variable, never the key. Remove
+the key, or move the file out of the folder if the attack doesn't need it.
+
 **Where do we ask?**
 In the event's help channel, or ask an organizer on the floor.

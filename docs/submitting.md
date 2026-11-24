@@ -37,11 +37,9 @@ curl -fLO https://github.com/nsurijr/mad-scientist/releases/latest/download/gold
 tar xzf golden-s0.tar.gz
 ```
 
-With `-f`, `curl` stops with an error instead of saving GitHub's error page as the archive. While
-the repository is private, the link returns 404: download `golden-s0.tar.gz` from the repository's
-Releases page while signed in to GitHub, or with the GitHub CLI,
-`gh release download event-1 -R nsurijr/mad-scientist -p golden-s0.tar.gz --clobber`, then unpack
-it as above.
+With `-f`, `curl` stops with an error instead of saving GitHub's error page as the archive. If it
+does, download `golden-s0.tar.gz` from the repository's Releases page instead, then unpack it as
+above.
 
 This creates `golden/`:
 
@@ -100,6 +98,12 @@ export HACK_TOKEN=<your team's token>
 ```
 
 The leaderboard is at `$HACK_URL` in a browser.
+
+If `hack` stops with `SSL: CERTIFICATE_VERIFY_FAILED`, your Python can't find its root
+certificates. With a Python from python.org on macOS, run its `Install Certificates.command` once
+(for example `open "/Applications/Python 3.12/Install Certificates.command"`, matching your
+version). Otherwise, run `pip install certifi` in the venv, then
+`export SSL_CERT_FILE="$(python -m certifi)"`.
 
 ### `hack preview`: free
 

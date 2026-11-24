@@ -8,6 +8,7 @@ it safely (service/bundle.py) and refuses one over the limits below.
 from __future__ import annotations
 
 import io
+import os
 import re
 import tarfile
 from pathlib import Path, PurePosixPath
@@ -20,6 +21,9 @@ MAX_BUNDLE_BYTES = 20 * 2**20  # the upload, compressed
 MAX_UNPACKED_BYTES = 50 * 2**20
 MAX_FILES = 200
 SKIP = {"__pycache__", ".git", ".ipynb_checkpoints"}  # left out of every bundle
+SECRET_NAME = re.compile(r"(KEY|TOKEN|SECRET)$", re.IGNORECASE)  # environment variables that hold one
+SHORTEST_SECRET = 16  # shorter values are placeholders, not keys
+LOOKS_LIKE_KEY = re.compile(rb"\b(sk-[A-Za-z0-9_-]{20,}|AIza[A-Za-z0-9_-]{35})")
 
 
 def static_check(folder: Path, team: str | None, targets) -> tuple[Manifest | None, list[str]]:
@@ -71,4 +75,24 @@ def size_problems(folder: Path) -> list[str]:
     packed = len(pack(folder))
     if packed > MAX_BUNDLE_BYTES:
         problems.append(f"the bundle is {packed / 2**20:.1f} MB compressed; at most {MAX_BUNDLE_BYTES // 2**20} MB")
+    return problems
+
+
+def secret_problems(folder: Path, environ=None) -> list[str]:
+    """The files a bundle of the folder would carry a key or token in: the value of an environment
+    variable named like one (SECRET_NAME), or a string shaped like an API key. The messages name the
+    variable, never the value."""
+    env = os.environ if environ is None else environ
+    values = {var: value.strip().encode() for var, value in sorted(env.items())
+              if SECRET_NAME.search(var) and len(value.strip()) >= SHORTEST_SECRET}
+    problems = []
+    for path in files(folder):
+        data = path.read_bytes()
+        rel = path.relative_to(folder).as_posix()
+        found = [f"${var}" for var, value in values.items() if value in data]
+        if found:
+            problems.append(f"{rel} holds the value of {' and '.join(found)}: keep keys and tokens out of "
+                            f"the submission")
+        elif LOOKS_LIKE_KEY.search(data):
+            problems.append(f"{rel} holds what looks like an API key: keep keys out of the submission")
     return problems
