@@ -1,0 +1,7 @@
+team: team-01
+name: hybrid1
+attack_class: injection
+stages_touched: [S2, S3]
+hooks: [on_context]
+intended_direction: "+"
+target: n_excess
