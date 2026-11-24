@@ -1,0 +1,7 @@
+team: team-01                 # your team's name, as hack status shows it
+name: hello-world               # 1-64 letters, digits, '.', '_' or '-'; a new name per attack
+attack_class: injection         # injection | input-poisoning | agent-code | collusion | other
+stages_touched: [S5]            # every stage a hook may change or replace
+hooks: [on_context]             # every hook attack.py implements
+intended_direction: "+"         # the direction you mean to move n_excess
+target: n_excess

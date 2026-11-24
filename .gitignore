@@ -4,3 +4,5 @@ __pycache__/
 .pytest_cache/
 golden/
 golden-*.tar.gz
+logs/interactions/
+.DS_Store
