@@ -1,0 +1,9 @@
+team: team-01
+name: codex1
+attack_class: input-poisoning
+stages_touched: [S3]
+hooks: [on_input]
+intended_direction: "+"
+target: n_excess
+shared:
+  shuffle_fraction: 0.5
