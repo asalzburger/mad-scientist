@@ -1,0 +1,10 @@
+team: team-01
+name: tucano
+attack_class: input-poisoning
+stages_touched: [S3]
+hooks: [on_input, on_context]
+intended_direction: "+"
+target: n_excess
+shared:
+  mj1_quantile: 0.993
+  scale: 0.6

@@ -177,6 +177,12 @@ def check(submission: Path, golden_dir: Path, make_host: Callable[[], HookHost],
     report["problems"] += runtime_problems(manifest, calls, replaced)
     report["fired"] = [f"{c['stage']} {c['hook']} {c['what']} ({c['call_id']})" for c in calls if c["changed"]]
     report["replaced"] = replaced
+    checked = {("S4", "scores_oof.csv"): "S4's numbers are recounted from the scores_oof.csv S3 wrote",
+               ("S5", "estimate.json"): "S5's values are compared with the estimate.json S4 wrote"}
+    for stage, name in dict.fromkeys((c["stage"], c["what"]) for c in calls
+                                     if c["changed"] and c["hook"] == "on_input" and (c["stage"], c["what"]) in checked):
+        report["warnings"].append(f"{stage} on_input changes {name}: {checked[stage, name]}, so a change "
+                                  "that moves them is detected")
     if replaced and set(report["implemented"]) - {"replace_agent"}:
         report["warnings"].append(f"the other hooks are skipped at replaced stages {replaced}")
     for stage in manifest.stages_touched:

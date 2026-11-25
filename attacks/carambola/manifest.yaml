@@ -1,0 +1,9 @@
+team: team-01
+name: carambola
+attack_class: input-poisoning
+stages_touched: [S3]
+hooks: [on_input]
+intended_direction: "+"
+target: n_excess
+shared:
+  m_j1_quantile: 0.993

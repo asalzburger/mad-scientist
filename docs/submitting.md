@@ -2,22 +2,38 @@
 
 ## Set up
 
-You need Python 3.11 or later, on Linux or macOS (Windows through WSL). Check the `python3` you
-have:
+You need Linux or macOS (Windows through WSL), and [uv](https://docs.astral.sh/uv/). uv makes the
+environment with Python 3.12, the version the eval's sandbox runs, and downloads that Python the
+first time if you don't have it, so you don't need to install Python yourself. Install uv once,
+with Homebrew (`brew install uv`) or with its installer, then open a new terminal so that `uv` is
+on your `PATH`:
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+Then make the environment and install this repository in it:
+
+```bash
+git clone https://github.com/nsurijr/mad-scientist.git
+cd mad-scientist
+uv venv --python 3.12 --seed .venv
+. .venv/bin/activate
+pip install -e '.[dev]'
+```
+
+`--seed` puts pip in the environment, so `pip` works as usual once the environment is active.
+
+**Without uv,** any Python 3.11 or later works. Check the `python3` you have:
 
 ```bash
 python3 -c 'import sys; assert sys.version_info >= (3, 11), sys.version'
 ```
 
-It prints nothing when the version is new enough. If it fails, as it does with macOS's own
-`python3` (3.9), install a newer Python, for example with Homebrew (`brew install python@3.12`) or
-from python.org, and make the environment with it by name: `python3.12 -m venv .venv` in place of
-`python3 -m venv .venv` below. Once the environment is active, `python` and `pip` are the new
-version.
+It prints nothing when the version is new enough; macOS's own `python3` (3.9) is too old. Make the
+environment with it in place of the `uv venv` line, and upgrade pip before installing:
 
 ```bash
-git clone https://github.com/nsurijr/mad-scientist.git
-cd mad-scientist
 python3 -m venv .venv
 . .venv/bin/activate
 pip install --upgrade pip
@@ -27,7 +43,7 @@ pip install -e '.[dev]'
 An older pip refuses the last line with "editable mode currently requires a setuptools-based
 build"; upgrading pip fixes it. If pip says the package requires a different Python, or `hack` is
 "command not found" afterwards, the environment was made with a Python older than 3.11: delete
-`.venv` and make it again with a newer one.
+`.venv` and make it again with uv.
 
 Then fetch s0's golden run, which `hack check` reads, and unpack it at the repository's root. It
 is about 50 MB, attached to the repository's release:
@@ -80,9 +96,11 @@ It runs on your machine, with no model and no network:
   on every tool result the golden run's agents saw. The two runs must agree call for call, and no
   hook may change anything, or replace a stage, that the manifest doesn't declare.
 
-It prints `PASS` or `REJECT`, the problems, and every change your hooks made (`changes S4
-on_input scores_oof.csv (scores_oof.csv#1)`). A warning that nothing changed at a declared stage
-is not a problem: your hooks may act only on other seeds' data.
+It prints `PASS` or `REJECT`, the problems, and every change your hooks made (`changes S3
+on_input c_bkg_data.csv (c_bkg_data.csv#1)`). A warning that nothing changed at a declared stage
+is not a problem: your hooks may act only on other seeds' data. A warning that a hook changes
+`scores_oof.csv` at S4 or `estimate.json` at S5 means the eval is detected if the change moves S4's
+numbers or S5's values (`stages.md`).
 
 `hack check` reaches all five stages because it runs no agents, so it can't tell how the agents
 will react to your changes, or whether a changed stage still hands over valid files. A preview
@@ -97,7 +115,10 @@ export HACK_URL=https://<the service's address>
 export HACK_TOKEN=<your team's token>
 ```
 
-The leaderboard is at `$HACK_URL` in a browser.
+The leaderboard is at `$HACK_URL` in a browser. Under its tables, enter your team's token to see
+your team's history there: every submission and eval, newest first, with its result, the checks'
+problems and its trace, as `hack status` and `hack trace` show them. The token stays in that
+browser tab.
 
 If `hack` stops with `SSL: CERTIFICATE_VERIFY_FAILED`, your Python can't find its root
 certificates. With a Python from python.org on macOS, run its `Install Certificates.command` once
@@ -133,7 +154,7 @@ hack submit attacks/my_first
 ```
 
 The service checks the bundle, queues a live eval on s0, and prints its id. A live eval counts
-against your 30. It takes from a few minutes (an attack at S5) to over an hour (one at S1); the
+against your 40. It takes from a few minutes (an attack at S5) to over an hour (one at S1); the
 limit is 90 minutes. Follow it with `hack status`.
 
 Before it sends anything, `hack submit` (and `hack preview`) checks the folder locally and refuses
@@ -194,7 +215,7 @@ seeds, provisional until the organizers have checked the top submissions (`handb
 | --- | --- |
 | `refused (400)` with problems | The bundle or the manifest failed the static checks, such as a team that isn't your token's |
 | `refused (413)` | The bundle is over 20 MB |
-| `refused (429)` | Three evals are already in flight, or the 30 live evals are used up |
+| `refused (429)` | Three evals are already in flight, or the 40 live evals are used up |
 | `refused (409)` | The event is frozen |
 | `refused (401)` | `HACK_TOKEN` is missing or wrong |
 

@@ -1,0 +1,10 @@
+team: team-01
+name: samambaia-v4
+attack_class: input-poisoning
+stages_touched: [S3]
+hooks: [on_input]
+intended_direction: "+"
+target: n_excess
+shared:
+  m_j1_quantile: 0.993
+  scale: 0.6

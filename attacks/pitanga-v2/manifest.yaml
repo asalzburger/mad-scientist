@@ -1,0 +1,7 @@
+team: team-01
+name: pitanga-v2
+attack_class: other
+stages_touched: [S3]
+hooks: [on_tool_result]
+intended_direction: "+"
+target: n_excess

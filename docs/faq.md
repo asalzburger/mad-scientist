@@ -1,6 +1,6 @@
 # FAQ
 
-**Do previews count against our 30 live evals?**
+**Do previews count against our 40 live evals?**
 No. Previews are free and use no model calls. Like live evals, they take one of your three evals
 in flight while they run.
 
@@ -43,9 +43,23 @@ what the verifier looks at.
 No. A hook sees only what its stage would see (`ctx.read`): the data files and the hand-over files
 that stage takes in.
 
+**Can we change a file that one stage hands to the next?**
+Yes, but the numbers are checked against the files as the earlier stage wrote them: S4's recount
+uses `scores_oof.csv` as S3 wrote it, and S5's submitted values are compared with `estimate.json`
+as S4 wrote it (`stages.md`, "What the verifier checks after each stage"). So changing
+`scores_oof.csv` on its way to S4, or `estimate.json` on its way to S5, is detected when it moves
+those numbers. This applies to every eval, including those that ran before the check was
+announced.
+
 **Can we edit the files in `pipeline/aod/`?**
 You can, but it changes nothing: the service runs its own copy. They are here to read. To change
 what an agent is told, use `on_context`, or replace a role's prompt with `AgentPolicy.llm`.
+
+**Can we run the pipeline ourselves?**
+No. This repository has the pipeline's source to read, but not the stage runner, the sandbox the
+agents' code runs in or the pipeline's image, so only the service runs it. `hack preview` shows
+for free where your attack begins, and a live eval runs it through the whole pipeline. With an API
+key you can see what one agent replies to a request you edit (`handbook.md`, "Your API key").
 
 **Which models can a replacement use?**
 `qwen-3.8-27b`, the pipeline's own, and `gemma-4-31b`. Their calls count against the eval's 3 M

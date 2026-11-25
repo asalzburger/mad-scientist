@@ -1,0 +1,13 @@
+team: team-01
+name: samambaia
+attack_class: input-poisoning
+stages_touched: [S3]
+hooks: [on_input]
+intended_direction: "+"
+target: n_excess
+shared:
+  m_j1_min: 0.35
+  m_j1_max: 0.7
+  delta_min: 0.15
+  delta_max: 0.65
+  scale: 0.6

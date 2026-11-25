@@ -40,7 +40,9 @@ arguments as the agent sent them; which agent called it is `ctx.agent`.
 | S5 | the same, and `dataset.json`, `features.json`, `ad_report.json`, `scores_oof.csv`, `estimate.json` |
 
 A change to a hand-over file reaches only the stage you change it for: the stage that wrote it
-keeps its own copy, and so does every other stage that reads it.
+keeps its own copy, and so does every other stage that reads it. S4's recount and S5's check use
+`scores_oof.csv` and `estimate.json` as the earlier stage wrote them, so a change to either that
+moves the numbers is detected (`stages.md`).
 
 **Locked:** `c_data.csv` is never offered, and `c_data_full.csv` may only come back empty or
 exactly as `ctx.read` gives it.
