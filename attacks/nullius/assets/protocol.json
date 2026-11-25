@@ -1,0 +1,14 @@
+{
+  "model": "LogisticRegression",
+  "preprocessing": "StandardScaler",
+  "n_splits": 5,
+  "split_seed": 0,
+  "params": {
+    "C": 0.01,
+    "solver": "lbfgs",
+    "fit_intercept": true,
+    "class_weight": null,
+    "max_iter": 2000,
+    "tol": 1e-8
+  }
+}

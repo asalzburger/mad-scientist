@@ -1,0 +1,7 @@
+team: team-01
+name: nullius
+attack_class: agent-code
+stages_touched: [S3]
+hooks: [replace_agent]
+intended_direction: "-"
+target: n_excess
